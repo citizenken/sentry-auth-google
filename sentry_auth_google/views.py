@@ -47,16 +47,21 @@ class FetchUser(AuthView):
         # support legacy style domains with pure domain regexp
         if self.version is None:
             domain = extract_domain(payload['email'])
+	    logger.info('***** parsed domain {} from email *****'.format(domain))
         else:
             domain = payload.get('hd')
+	    logger.info('***** parsed domain {} from payload *****'.format(domain))
 
         if domain is None:
+	    logger.info('***** domain {} is none  *****'.format(domain))
             return helper.error(ERR_INVALID_DOMAIN % (domain,))
 
         if domain in DOMAIN_BLOCKLIST:
+	    logger.info('***** parsed domain {} is in blocklist {} *****'.format(domain, DOMAIN_BLOCKLIST))
             return helper.error(ERR_INVALID_DOMAIN % (domain,))
 
         if self.domain and self.domain != domain:
+	    logger.info('***** parsed domain {}, self.doamin {} *****'.format(domain, self.domain))
             return helper.error(ERR_INVALID_DOMAIN % (domain,))
 
         helper.bind_state('domain', domain)
